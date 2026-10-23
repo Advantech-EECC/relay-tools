@@ -5,9 +5,21 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-deb:
-    runs-on: ubuntu-24.04
+    name: Build Debian package (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
 
     steps:
       - name: Checkout repository
@@ -41,7 +53,16 @@ jobs:
           mv ../*.deb dist/
 
       - name: Verify package contents
+        env:
+          EXPECTED_ARCH: ${{ matrix.arch }}
         run: |
+          for package in dist/*.deb; do
+            actual_arch=$(dpkg-deb -f "$package" Architecture)
+            if [ "$actual_arch" != "$EXPECTED_ARCH" ]; then
+              echo "::error::expected ${EXPECTED_ARCH}, got ${actual_arch} in ${package}"
+              exit 1
+            fi
+          done
           dpkg-deb -c dist/*.deb | tee /tmp/deb-contents.txt
           for path in \
             ./usr/lib/systemd/system/relay-mcp.service \
@@ -55,6 +76,13 @@ jobs:
               exit 1
             fi
           done
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: relay-tools-${{ matrix.arch }}
+          path: dist/*.deb
+          if-no-files-found: error
 
       - name: Upload .deb to release
         if: github.event_name == 'release'

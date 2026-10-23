@@ -45,12 +45,17 @@ The Waveshare RPi Relay Board (B) uses the following BCM GPIO pins
 
 **Debian package (recommended on Raspberry Pi)**
 
+The release workflow builds native `amd64` and `arm64` packages on Ubuntu 24.04.
+Both are available as workflow artifacts and are attached to published releases.
+Use `arm64` for a Raspberry Pi running a matching 64-bit Ubuntu installation;
+these builds do not target 32-bit Raspberry Pi OS (`armhf`).
+
 The `.deb` built by the release workflow (dh-virtualenv) bundles all Python
 dependencies — including the MCP SDK — in a self-contained virtualenv under
 `/opt/venvs/relay-tools` and exposes `relay`, `relay-api`, `relay-client`,
 `relay-board`, and `relay-mcp` in `/usr/bin`. It only needs the distro's
-`python3` (build and target distribution must match, e.g. Debian/Raspberry Pi
-OS bookworm) and uses the distro GPIO packages (`python3-gpiozero`,
+`python3` (build and target distribution must match; build locally for
+Debian/Raspberry Pi OS bookworm) and uses the distro GPIO packages (`python3-gpiozero`,
 `python3-lgpio`, `python3-rpi.gpio`) via the venv's system-site-packages.
 
 ```bash
