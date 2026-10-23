@@ -57,6 +57,16 @@ OS bookworm) and uses the distro GPIO packages (`python3-gpiozero`,
 sudo apt install ./relay-tools_<version>_arm64.deb
 ```
 
+To build the Debian package locally on the target distribution:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential debhelper dh-virtualenv python3-dev python3-venv
+dpkg-buildpackage -us -uc -b
+```
+
+The build needs internet access to download and bundle the Python dependencies.
+
 **Basic install (no GPIO)**
 
 ```bash
