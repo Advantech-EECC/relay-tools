@@ -367,7 +367,7 @@ control is opt-in additive functionality.
 
 `deploy/systemd/` ships a unit file that runs `relay-mcp` as a managed service
 on a Raspberry Pi and starts it automatically on boot. The unit runs
-`/usr/bin/relay-mcp --transport http` as user `pi` (a symlink into the
+`/usr/bin/relay-mcp --transport http` as root (a symlink into the
 bundled virtualenv when installed from the Debian package), restarts on
 failure, and logs to the journal. Runtime settings are overridden via
 `/etc/default/relay-mcp` — no edits to the unit file are needed.
@@ -409,9 +409,9 @@ after changing it.
   `pip install 'relay-tools[mcp]'`, or override `ExecStart` with
   `sudo systemctl edit relay-mcp` to point at your venv's `relay-mcp`.
 - **GPIO/device permissions** — `relay-mcp` never touches GPIO itself; it
-  talks to the relay daemon over HTTP. If power actions fail, check that
-  `relay-daemon` is running and that *its* user has GPIO access (member of
-  the `gpio` group, or running as root).
+  talks to the root-running relay daemon over HTTP. If power actions fail,
+  check that `relay-daemon` is running and that the GPIO driver is installed
+  and available to root.
 - **Logs** — stdout/stderr go to the systemd journal. Use
   `journalctl -u relay-mcp -e` for recent entries and
   `journalctl -u relay-mcp -f` to follow startup errors such as import

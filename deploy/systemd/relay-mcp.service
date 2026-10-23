@@ -17,8 +17,8 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=pi
-Group=pi
+User=root
+Group=root
 Environment=PYTHONUNBUFFERED=1
 EnvironmentFile=-/etc/default/relay-mcp
 # relay-mcp speaks stdio by default; a long-running service needs the HTTP

@@ -46,8 +46,8 @@
 # /opt/venvs/relay-tools by the Debian package. GPIO bindings come from
 # the distro packages (python3-gpiozero, python3-lgpio, python3-rpi.gpio).
 #
-# On Raspberry Pi the process user must be in the 'gpio' group, or you can
-# run as root (SupplementaryGroups= / User= below).
+# The service runs as root so GPIO access is available without extra group
+# configuration.
 
 [Unit]
 Description=relay-tools HTTP API daemon
@@ -59,11 +59,8 @@ Wants=network.target
 Type=simple
 
 # Run as root so GPIO access is available without extra group configuration.
-# To run as a dedicated user instead, create that user, add it to the 'gpio'
-# group, and change the two lines below:
-#   User=relay
-#   SupplementaryGroups=gpio
 User=root
+Group=root
 
 # Ensure the config directory exists before starting.
 ExecStartPre=-/bin/mkdir -p /etc/relay
