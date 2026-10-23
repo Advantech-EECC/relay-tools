@@ -9,6 +9,10 @@ override_dh_virtualenv:
 	# "mcp" extra) in a self-contained virtualenv. --use-system-packages
 	# lets the venv see distro GPIO packages (python3-gpiozero, lgpio,
 	# RPi.GPIO) on the target without bundling compiled GPIO bindings.
+	# --ignore-installed stops pip from treating packages already present
+	# in the *build host's* system site-packages as satisfied; otherwise
+	# they are silently left out of the venv (e.g. typing_inspection) and
+	# imports fail on targets that lack the same distro packages.
 	dh_virtualenv \
 		--python /usr/bin/python3 \
 		--builtin-venv \
@@ -16,6 +20,7 @@ override_dh_virtualenv:
 		--preinstall "setuptools>=42" \
 		--preinstall "wheel" \
 		--use-system-packages \
+		--extra-pip-arg=--ignore-installed \
 		--extras mcp
 
 override_dh_install:
